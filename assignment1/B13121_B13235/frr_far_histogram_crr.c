@@ -1,0 +1,92 @@
+//The following codes does the following:
+//1. Finds FAR and FAR at each threshold. It takes the values from stdin (so user needs to i/o redirect the input file and prints the FAR and FRR values at each threshold in stdout.
+//2. Prints the genuine and imposter histogram to a text file named genuine_histogram.txt and imposter_histogram.txt
+//3. It also generates CRR.txt which contains Correct Recognition Rate of the system.
+//This is all accompalished in linear time.
+
+#include <stdio.h>
+#include <string.h>
+#define RESOLUTION 1000001
+
+int main()
+{
+  char line[60];
+  int subId1, subId2, posId1, posId2, gORi;
+  int prev_subId1, prev_posId1, min_subId, min_posId, max_subId, max_posId;
+  double score;
+  double min_score, max_score;
+
+
+  int genuine[RESOLUTION], imposter[RESOLUTION];
+  memset(genuine, 0, sizeof(int) *RESOLUTION);
+  memset(imposter, 0, sizeof(int) *RESOLUTION);
+
+  int i;
+
+  FILE * crr_fp = fopen("CRR.txt", "w");
+
+  //Reading the first line separately
+  fgets(line, 59, stdin);
+  sscanf(line, "%d%d%d%d%d%lf", &subId1, &posId1, &subId2, &posId2, &gORi, &score);
+  if(gORi)
+    ++genuine[(int)(score*1000000)];
+  else ++imposter[(int)(score*1000000)];
+  //Initializing variables for finding CRR
+  prev_subId1 = subId1;
+  prev_posId1 = posId1;
+  min_subId = max_subId = subId2;
+  min_posId = max_posId = posId2;
+  min_score = max_score = score;
+  //  printf("Threshold\tCumulative occurences\tFRR\t\tThreshold\tCumulative occurences\tFAR\n");
+  fprintf(crr_fp, "Correct Recognition Rate\n");
+  while(fgets(line, 59, stdin)) {
+    sscanf(line, "%d%d%d%d%d%lf", &subId1, &posId1, &subId2, &posId2, &gORi, &score);
+    if(subId1 != prev_subId1 || posId1 != prev_posId1) {
+      fprintf(crr_fp, "%d\t%d\t\t[(%d, %d)%lf]\t\t[(%d, %d)%lf]\t\t%lf\t\t%d\n", prev_subId1, prev_posId1, min_subId, min_posId, min_score, max_subId, max_posId, max_score, min_score/max_score, ((prev_subId1 == min_subId) ? 1 : 0));
+      min_subId = max_subId = subId2;
+      min_posId = max_posId = posId2;
+      min_score = max_score = score;
+    }
+    else {
+      if(score < min_score) {
+	min_posId = posId2;
+	min_subId = subId2;
+	min_score = score;
+      }
+      else if(score > max_score) {
+	max_posId = posId2;
+	max_subId = subId2;
+	max_score = score;
+      }
+    }
+    prev_subId1 = subId1;
+    prev_posId1 = posId1;
+    
+    if(gORi)
+      ++genuine[(int)(score*1000000)];
+    else ++imposter[(int)(score*1000000)];
+  }
+  fprintf(crr_fp, "%d\t%d\t\t[(%d, %d)%lf]\t\t[(%d, %d)%lf]\t\t%lf\t\t%d\n", prev_subId1, prev_posId1, min_subId, min_posId, min_score, max_subId, max_posId, max_score, min_score/max_score, ((prev_subId1 == min_subId) ? 1 : 0));
+
+  FILE * fp = fopen("genuine_histogram.txt", "w");
+  fprintf(fp, "Genuine Histogram\nFrequence vs Score\n");
+  for(i = 0; i < RESOLUTION; i++)
+    fprintf(fp, "%d\t%lf\n", genuine[i], i/1000000.0);
+  fclose(fp);
+  fp = fopen("imposter_histogram.txt", "w");
+  fprintf(fp, "Imposter Histogram\nFrequence vs Score\n");
+  for(i = 0; i < RESOLUTION; i++)
+    fprintf(fp, "%d\t%lf\n", imposter[i], i/1000000.0);
+
+
+  for(i = 1; i < RESOLUTION; i++) {
+    genuine[i] += genuine[i-1];
+    imposter[i] += imposter[i-1];
+  }
+ 
+  for(i = 0; i < RESOLUTION; i++) {
+     printf("%d\t%d\t%f\t\t%d\t%d\t%f\n", i, genuine[i], (genuine[RESOLUTION-1] - genuine[i])*100.0/genuine[RESOLUTION-1], i, imposter[i], (imposter[i]*100.0)/imposter[RESOLUTION-1]);
+  }
+ 
+  return 0;
+}

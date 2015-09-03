@@ -1,0 +1,24 @@
+#include <iostream.h>
+#define RESOLUTION 1000001
+
+int main()
+{
+  char line[60];
+  int dump, gORi;
+  double score;
+  int genuine[RESOLUTION], imposter[RESOLUTION];
+  while(scanf("%s", line) == 1) {
+    sscanf(line, "%d%d%d%d%d%f", &dump, &dump, &dump, &dump, &gORi, &score);
+    if(gORi)
+      ++genuine[score*1000000];
+    else ++imposter[score*1000000];
+  }
+  int i = 0;
+  for(i = 1; i < RESOLUTION; i++) {
+    genuine[i] += genuine[i-1];
+    imposter[i] += imposter[i-1];
+  }
+  printf("No. of total imposters: %d\n", imposter[RESOLUTION-1]);
+  printf("No. of total genuines: %d\n", genuine[RESOLUTION-1]);
+  return 0;
+}

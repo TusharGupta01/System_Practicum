@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <string.h>
+#define RESOLUTION 1000001
+
+int main()
+{
+  char line[60];
+  int dump, gORi;
+  double score;
+  int genuine[RESOLUTION], imposter[RESOLUTION];
+  memset(genuine, 0, sizeof(int) *RESOLUTION);
+  memset(imposter, 0, sizeof(int) *RESOLUTION);
+  int i;
+  double frr, far;
+  double min = 1.0;
+  double diff;
+  while(fgets(line, 59, stdin)) {
+    sscanf(line, "%d%d%lf%d%d%lf", &threshold, &dump, &frr, &dump, &dump, &far);
+    diff = abs(frr-far);
+    if(diff < min) {
+      min = diff;
+    }
+    else break;
+  }
+  printf("EER: %f\nThreshold at EER: %f\n", min, threshold);
+  return 0;
+}

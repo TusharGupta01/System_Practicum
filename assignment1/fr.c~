@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <string.h>
+
+int main()
+{
+  char line[60];
+  int dump, gORi;
+  double score;
+ 
+  int threshold;
+  scanf("%d", &threshold);
+  while(fgets(line, 59, stdin)) {
+    sscanf(line, "%d%d%d%d%d%lf", &dump, &dump, &dump, &dump, &gORi, &score);
+    if(threshold
+  }
+
+  
+  for(i = 1; i < RESOLUTION; i++) {
+    genuine[i] += genuine[i-1];
+    imposter[i] += imposter[i-1];
+  }
+  for(i = 0; i < RESOLUTION; i++) {
+    printf("%d\t%d\t%f\t\t%d\t%d\t%f\n", i, genuine[i], (genuine[RESOLUTION-1] - genuine[i])*100.0/genuine[RESOLUTION-1], i, imposter[i], (imposter[i]*100.0)/imposter[RESOLUTION-1]);
+  }
+ 
+  return 0;
+}
