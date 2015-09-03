@@ -3,19 +3,39 @@
 #include <stdio.h>
 #include <stdlib.h> //for getenv()
 #include <unistd.h>
-#define PATH_MAX 200
-#define HOST_NAME_MAX 50
+#include <string.h>
+#include <dirent.h>
+
+FILE * ifp;
+
 void clearSpace() {
   int ch;
-  ch = getchar();
+  ch = getc(ifp);
   while(ch == ' ' || ch == '\t')
-    ch = getchar();
-  ungetc(ch, stdin);
+    ch = getc(ifp);
+  ungetc(ch, ifp);
+}
+
+
+int listDir(char * directory) {
+  DIR * dir;
+  struct dirent *ent;
+  if((dir = opendir(directory)) != NULL) {
+    //Print all the files and directories within directory
+    while( (ent = readdir(dir)) != NULL) {
+      printf("%s\n", ent->d_name);
+    }
+    closedir(dir);
+  } else {
+    //Could not open directory
+    perror("Could not open directory.\n");
+    return EXIT_FAILURE;
+  }
 }
 
 void clear (void)
 { 
-  while ( getchar() != '\n' );
+  while ( getc(ifp) != '\n' );
 }
 
 void printEnvList(char ** envp) {
@@ -28,7 +48,7 @@ void printEnvList(char ** envp) {
 void dumpInput() {
   int ch;
   clearSpace();
-  while((ch = getchar())!= '\n') {
+  while((ch = getc(ifp))!= '\n') {
     if(ch == ' ' || ch == '\t') {
       clearSpace();
       printf(" ");
@@ -48,19 +68,19 @@ int main(int argc, char * argv[], char * envp[]) {
   char * hostName;
   hostName = (char *) malloc(sizeof(char) * HOST_NAME_MAX);
   gethostname(hostName, HOST_NAME_MAX);
-  FILE * fp = stdin;
-  int flag = 0; //0 Indi
+
+  ifp = stdin;
   if(argc > 1) {
-    fp = fopen(argv[1], "r");
-    if(fp == NULL) {
+    ifp = fopen(argv[1], "r");
+    if(ifp == NULL) {
       printf("Unable to open file. User can enter commands manually.\n");
-      fp = stdin;
+      ifp = stdin;
     }
   }
-  while(1) {
+  while(ifp) {
     printf("|%s@%s:%s$| ", getenv("USER"), hostName, getcwd(temp,PATH_MAX));
    
-    fscanf(stdin, "%s", s); //Read next command
+    fscanf(ifp, "%s", s); //Read next command
     
     if(strcmp(s, "clr") == 0) {
       clear();
@@ -71,6 +91,18 @@ int main(int argc, char * argv[], char * envp[]) {
     else if(strcmp(s, "HOME") == 0) {
       printf("%s\n", getenv(s));
     }
+
+    else if(strcmp(s, "dir") == 0) {
+      clearSpace();
+      if((ch = getchar()) == '\n') 
+	listDir(getcwd(temp, PATH_MAX));
+      else {
+	ungetc(ch, ifp);
+	fscanf(ifp, "%s", s);
+	listDir(s);
+      }
+    }
+
 
     else if(strcmp(s, "environ") == 0 ) {
       printEnvList(envp);
@@ -89,19 +121,19 @@ int main(int argc, char * argv[], char * envp[]) {
     }
 
     else if(strcmp(s, "pause") == 0) {
-      while((ch = getchar()) != '\n'); //For clearing input buffer from the same line of pause
-      printf("Press enter or return key to resume.");
-      //while((ch = getchar()) != '\n');
+      while((ch = getc(ifp)) != '\n'); //For clearing input buffer from the same line of pause      
+      printf("Press enter or return key to resume.\n");
+      while((ch = getc(ifp)) != '\n');
       //pause();
     }
 
     else if(strcmp(s, "cd") == 0) {
       clearSpace();
-      if((ch = getchar()) == '\n') 
+      if((ch = getc(ifp)) == '\n') 
 	printf("%s\n", getcwd(temp, PATH_MAX));
       else {
-	ungetc(ch, fp);
-	scanf("%s", s);
+	ungetc(ch, ifp);
+	fscanf(ifp, "%s", s);
 	if(chdir(s) != 0)
 	  printf("Error changing directory.\n");
 	else setenv("PWD", getcwd(temp, PATH_MAX), 1);
