@@ -1,0 +1,2 @@
+echo - Display ​<comment> ​on the display followed by a new line. ( Multiple 
+spaces/tabs may be reduced to a single space).
