@@ -5,6 +5,7 @@
 #include <dirent.h>
 
 FILE * ifp;
+// Help function - if help is for all the command is aked for 
 void help(){
 	FILE *cd,*environ,*dir,*pause,*echo,*clr,*quit;
     	cd = fopen("cd.txt", "r");
@@ -44,6 +45,7 @@ void help(){
 	}
 	printf("\n");			
 }
+// Help function - if help for particular command is asked for
 void ind_help(char *str){
 	FILE *cd,*environ,*dir,*pause,*echo,*clr,*quit;
     	cd = fopen("cd.txt", "r");
@@ -117,14 +119,15 @@ int listDir(char * directory) {
   	DIR * dir;
   	struct dirent *ent;
   	if((dir = opendir(directory)) != NULL) {
-    		//Print all the files and directories within directory
+
+//Print all the files and directories within directory
     		while( (ent = readdir(dir)) != NULL) {
       			printf("%s\n", ent->d_name);
     		}
     		closedir(dir);
   	} 
 	else {
-    		//Could not open directory
+//Could not open directory
     		perror("Could not open directory.\n");
     		return EXIT_FAILURE;
   	}
@@ -185,11 +188,11 @@ int main(int argc, char * argv[], char * envp[]) {
       			printf("\033[2J\033[1;1H");
       			/* The first one (\033[2J) clears the entire screen (J) from top to bottom (2). The second code (\033[1;1H) positions 				the cursor at row 1, column 1.*/
     		}
-
+// Home command
     		else if(strcmp(s, "HOME") == 0) {
       			printf("%s\n", getenv(s));
     		}
-
+// ls or dir command
     		else if(strcmp(s, "dir") == 0) {
       			clearSpace();
       			if((ch = getchar()) == '\n') 
@@ -200,30 +203,30 @@ int main(int argc, char * argv[], char * envp[]) {
 				listDir(s);
       			}
     		}
-
-
+// environ command
     		else if(strcmp(s, "environ") == 0 ) {
       			printEnvList(envp);
     		}
-
+// echo command
     		else if(strcmp(s, "echo") == 0) {
       			dumpInput();
     		}
-
+// quit command
     		else if(strcmp(s, "quit") == 0) {
       			exit(0);
     		}
-
+// pwd command
     		else if(strcmp(s, "pwd") == 0) {
       			printf("%s\n", getenv("PWD"));
     		}
-
+// pause command
     		else if(strcmp(s, "pause") == 0) {
       			while((ch = getc(ifp)) != '\n'); //For clearing input buffer from the same line of pause      
       				printf("Press enter or return key to resume.\n");
       			while((ch = getc(ifp)) != '\n');
       				//pause();
     		}
+// help command
 		else if(strcmp(s, "help") == 0){
 			clearSpace();
 			if((ch = getc(ifp)) == '\n'){
@@ -235,7 +238,7 @@ int main(int argc, char * argv[], char * envp[]) {
 				ind_help(s);
 			}
     		}
-
+// change directory command
     		else if(strcmp(s, "cd") == 0) {
      			clearSpace();
       			if((ch = getc(ifp)) == '\n') 

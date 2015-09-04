@@ -5,6 +5,7 @@
 #include <dirent.h>
 
 FILE * ifp;
+// Help function - if help is for all the command is aked for 
 void help(){
 	FILE *cd,*environ,*dir,*pause,*echo,*clr,*quit;
     	cd = fopen("cd.txt", "r");
@@ -44,6 +45,7 @@ void help(){
 	}
 	printf("\n");			
 }
+// Help function - if help for particular command is asked for
 void ind_help(char *str){
 	FILE *cd,*environ,*dir,*pause,*echo,*clr,*quit;
     	cd = fopen("cd.txt", "r");
@@ -117,14 +119,15 @@ int listDir(char * directory) {
   	DIR * dir;
   	struct dirent *ent;
   	if((dir = opendir(directory)) != NULL) {
-    		//Print all the files and directories within directory
+
+//Print all the files and directories within directory
     		while( (ent = readdir(dir)) != NULL) {
       			printf("%s\n", ent->d_name);
     		}
     		closedir(dir);
   	} 
 	else {
-    		//Could not open directory
+//Could not open directory
     		perror("Could not open directory.\n");
     		return EXIT_FAILURE;
   	}
@@ -175,7 +178,7 @@ int main(int argc, char * argv[], char * envp[]) {
     		}
   	}
   	while(ifp) {
-		if(!ifp){
+		if(argc <= 1){
     			printf("|%s@%s:%s$| ", getenv("USER"), hostName, getcwd(temp,PATH_MAX));
 		}
     		fscanf(ifp, "%s", s); //Read next command
