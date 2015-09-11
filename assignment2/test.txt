@@ -3,4 +3,6 @@ cd
 ls
 cd 
 environ
+clr
 quit
+

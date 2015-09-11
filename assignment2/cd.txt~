@@ -1,4 +1,2 @@
-cd - Change the current default directory to ​<directory>. ​
-If the <directory> ​argument is not present, report current the current directory. If the directory 
-doesn’t exist an appropriate error should be reported. This command should change the PWD 
-environment variable."\n"
+cd - Change the current default directory.​If the ​argument is not present, report current the current directory. If the directory doesn’t exist an appropriate error should be reported. This command should change the PWD 
+environment variable.
