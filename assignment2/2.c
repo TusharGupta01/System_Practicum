@@ -3,7 +3,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <dirent.h>
-
 FILE * ifp;
 void help();
 void ind_help();
@@ -13,6 +12,8 @@ void clear (void);
 void printEnvList(char **);
 void dumpInput();
 
+
+
 int main(int argc, char * argv[], char * envp[]) {
 
   char s[100]; //Maximum assumed length of any command word
@@ -21,7 +22,9 @@ int main(int argc, char * argv[], char * envp[]) {
   char * hostName;
   hostName = (char *) malloc(sizeof(char) * HOST_NAME_MAX);
   gethostname(hostName, HOST_NAME_MAX);
-
+  char result[ PATH_MAX ];
+  ssize_t count = readlink( "/proc/self/exe", result, PATH_MAX );
+  setenv("SHELL",result,1);
   ifp = stdin;
   if(argc > 1) {
     ifp = fopen(argv[1], "r");
@@ -30,7 +33,8 @@ int main(int argc, char * argv[], char * envp[]) {
       ifp = stdin;
     }
   }
-  while(ifp) {
+
+  while(!feof(ifp)) {
     if(argc <= 1){
       printf("|%s@%s:%s$| ", getenv("USER"), hostName, getcwd(temp,PATH_MAX));
     }
@@ -107,16 +111,22 @@ int main(int argc, char * argv[], char * envp[]) {
   }//End of while(1) 
   return 0;
 }
+
+
+
+
+
+
 // Help function - if help is for all the command is aked for 
 void help(){
   FILE *cd,*environ,*dir,*pause,*echo,*clr,*quit;
-  cd = fopen("cd.txt", "r");
-  environ = fopen("environ.txt", "r");
-  pause = fopen("pause.txt", "r");
-  dir = fopen("dir.txt", "r");
-  echo = fopen("echo.txt", "r");
-  clr = fopen("clr.txt", "r");
-  quit = fopen("quit.txt", "r");
+  cd = fopen("/helpFiles/cd.txt", "r");
+  environ = fopen("/helpFiles/environ.txt", "r");
+  pause = fopen("/helpFiles/pause.txt", "r");
+  dir = fopen("/helpFiles/dir.txt", "r");
+  echo = fopen("/helpFiles/echo.txt", "r");
+  clr = fopen("/helpFiles/clr.txt", "r");
+  quit = fopen("/helpFiles/quit.txt", "r");
   char line[200];	
   while(fgets(line,200,cd)){
     printf("%s",line);
@@ -151,64 +161,65 @@ void help(){
 // Help function - if help for particular command is asked for
 void ind_help(char *str){
   FILE *cd,*environ,*dir,*pause,*echo,*clr,*quit;
-  cd = fopen("cd.txt", "r");
-  environ = fopen("environ.txt", "r");
-  pause = fopen("pause.txt", "r");
-  dir = fopen("dir.txt", "r");
-  echo = fopen("echo.txt", "r");
-  clr = fopen("clr.txt", "r");
-  quit = fopen("quit.txt", "r");
+  cd = fopen("/helpFiles/cd.txt", "r");
+  environ = fopen("/helpFiles/environ.txt", "r");
+  pause = fopen("/helpFiles/pause.txt", "r");
+  dir = fopen("/helpFiles/dir.txt", "r");
+  echo = fopen("/helpFiles/echo.txt", "r");
+  clr = fopen("/helpFiles/clr.txt", "r");
+  quit = fopen("/helpFiles/quit.txt", "r");
   char line[200];
-  if(strcmp(str, "-cd") == 0){
-    echo = fopen("cd.txt","r");
-    while(fgets(line,200,echo)){
+  if(strcmp(str, "cd") == 0){
+    cd = fopen("cd.txt","r");
+    while(fgets(line,200,cd)){
       printf("%s",line);
     }
     printf("\n");
   }
-  else if(strcmp(str, "-environ") == 0){
-    echo = fopen("environ.txt","r");
-    while(fgets(line,200,echo)){
+  else if(strcmp(str, "environ") == 0){
+    environ = fopen("environ.txt","r");
+    while(fgets(line,200,environ)){
       printf("%s",line);
     }
     printf("\n");
   }
-  else if(strcmp(str, "-pause") == 0){
-    echo = fopen("pause.txt","r");
-    while(fgets(line,200,echo)){
+  else if(strcmp(str, "pause") == 0){
+    pause = fopen("pause.txt","r");
+    while(fgets(line,200,pause)){
       printf("%s",line);
     }
     printf("\n");
   }
-  else if(strcmp(str, "-dir") == 0){
-    echo = fopen("dir.txt","r");
-    while(fgets(line,200,echo)){
+  else if(strcmp(str, "dir") == 0){
+    dir = fopen("dir.txt","r");
+    while(fgets(line,200,dir)){
       printf("%s",line);
     }
     printf("\n");
   }
-  else if(strcmp(str, "-echo") == 0){
+  else if(strcmp(str, "echo") == 0){
     echo = fopen("echo.txt","r");
     while(fgets(line,200,echo)){
       printf("%s",line);
     }
     printf("\n");
   }
-  else if(strcmp(str, "-clr") == 0){
-    echo = fopen("clr.txt","r");
-    while(fgets(line,200,echo)){
+  else if(strcmp(str, "clr") == 0){
+    clr = fopen("clr.txt","r");
+    while(fgets(line,200,clr)){
       printf("%s",line);
     }
     printf("\n");
   }
-  else if(strcmp(str, "-quit") == 0){
-    echo = fopen("quit.txt","r");
-    while(fgets(line,200,echo)){
+  else if(strcmp(str, "quit") == 0){
+    quit = fopen("quit.txt","r");
+    while(fgets(line,200,quit)){
       printf("%s",line);
     }
     printf("\n");
   }
 }
+// Clear all tabs and spaces
 void clearSpace() {
   int ch;
   ch = getc(ifp);
@@ -217,7 +228,7 @@ void clearSpace() {
   ungetc(ch, ifp);
 }
 
-
+// Print out all the file in the directory
 int listDir(char * directory) {
   DIR * dir;
   struct dirent *ent;
