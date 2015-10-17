@@ -4,10 +4,11 @@
 #include<time.h>
 #include<fstream>
 using namespace std;
- int a[3000][3000],b[3000][3000];
+
 int main(int argc,char *argv[]){
   int num;
   sscanf (argv[1], "%i", &num);
+  int a[num][num],b[num][num];
   int i,j,k;
    
   clock_t startTime = clock();
@@ -39,7 +40,13 @@ int main(int argc,char *argv[]){
     }
     float secsElapsed = (float)(clock() - startTime)/CLOCKS_PER_SEC;
     
-    myfile<<l<<"\t"<<secsElapsed<<"\n";
+    myfile <<secsElapsed<<"\n";
   }
   myfile.close();
+  /*for (i = 0; i < num; i++) {
+    for (j = 0; j < num; j++) {
+    cout<<c[i][j]<<" ";
+    }
+    cout<<"\n";
+    }*/
 }

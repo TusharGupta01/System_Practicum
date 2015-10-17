@@ -3,7 +3,13 @@
 #include <unistd.h>
 #include <string.h>
 #include <dirent.h>
+<<<<<<< HEAD
+
+FILE * ifp; //For specifying input stream
+
+=======
 FILE * ifp;
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
 void help();
 void ind_help();
 void clearSpace();
@@ -12,17 +18,34 @@ void clear (void);
 void printEnvList(char **);
 void dumpInput();
 
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
 int main(int argc, char * argv[], char * envp[]) {
 
   char s[100]; //Maximum assumed length of any command word
   int ch;
   char * temp;
+<<<<<<< HEAD
+
+  char * hostName;
+  hostName = (char *) malloc(sizeof(char) * HOST_NAME_MAX);
+  gethostname(hostName, HOST_NAME_MAX);
+
+  char result[PATH_MAX];
+  readlink("/proc/self/exe", result, PATH_MAX);
+  setenv("SHELL", result, 1);
+
+=======
   char * hostName;
   hostName = (char *) malloc(sizeof(char) * HOST_NAME_MAX);
   gethostname(hostName, HOST_NAME_MAX);
   char result[ PATH_MAX ];
   ssize_t count = readlink( "/proc/self/exe", result, PATH_MAX );
   setenv("SHELL",result,1);
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
   ifp = stdin;
   if(argc > 1) {
     ifp = fopen(argv[1], "r");
@@ -33,20 +56,39 @@ int main(int argc, char * argv[], char * envp[]) {
   }
 
   while(!feof(ifp)) {
+<<<<<<< HEAD
+   
+    if(argc <= 1){
+      printf("|%s@%s:%s$| ", getenv("USER"), hostName, getcwd(temp,PATH_MAX));
+    }
+
+    fscanf(ifp, "%s", s);//Read next command
+=======
     if(argc <= 1){
       printf("|%s@%s:%s$| ", getenv("USER"), hostName, getcwd(temp,PATH_MAX));
     }
     fscanf(ifp, "%s", s); //Read next command
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
     
     if(strcmp(s, "clr") == 0) {
       clear();
       printf("\033[2J\033[1;1H");
+<<<<<<< HEAD
+      /* The first one (\033[2J) clears the entire screen (J) from top to bottom (2). The second code (\033[1;1H) positions the cursor at row 1, column 1.*/
+    }
+
+=======
       /* The first one (\033[2J) clears the entire screen (J) from top to bottom (2). The second code (\033[1;1H) positions 				the cursor at row 1, column 1.*/
     }
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
     // Home command
     else if(strcmp(s, "HOME") == 0) {
       printf("%s\n", getenv(s));
     }
+<<<<<<< HEAD
+
+=======
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
     // ls or dir command
     else if(strcmp(s, "dir") == 0) {
       clearSpace();
@@ -58,22 +100,42 @@ int main(int argc, char * argv[], char * envp[]) {
 	listDir(s);
       }
     }
+<<<<<<< HEAD
+
+=======
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
     // environ command
     else if(strcmp(s, "environ") == 0 ) {
       printEnvList(envp);
     }
+<<<<<<< HEAD
+
+=======
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
     // echo command
     else if(strcmp(s, "echo") == 0) {
       dumpInput();
     }
+<<<<<<< HEAD
+
+=======
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
     // quit command
     else if(strcmp(s, "quit") == 0) {
       exit(0);
     }
+<<<<<<< HEAD
+
+=======
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
     // pwd command
     else if(strcmp(s, "pwd") == 0) {
       printf("%s\n", getenv("PWD"));
     }
+<<<<<<< HEAD
+
+=======
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
     // pause command
     else if(strcmp(s, "pause") == 0) {
       while((ch = getc(ifp)) != '\n'); //For clearing input buffer from the same line of pause      
@@ -81,6 +143,10 @@ int main(int argc, char * argv[], char * envp[]) {
       while((ch = getc(ifp)) != '\n');
       //pause();
     }
+<<<<<<< HEAD
+
+=======
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
     // help command
     else if(strcmp(s, "help") == 0){
       clearSpace();
@@ -93,6 +159,10 @@ int main(int argc, char * argv[], char * envp[]) {
 	ind_help(s);
       }
     }
+<<<<<<< HEAD
+
+=======
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
     // change directory command
     else if(strcmp(s, "cd") == 0) {
       clearSpace();
@@ -106,12 +176,29 @@ int main(int argc, char * argv[], char * envp[]) {
 	else setenv("PWD", getcwd(temp, PATH_MAX), 1);
       }
     }
+<<<<<<< HEAD
+  }//End of while() 
+  return 0;
+}
+
+
+
+
+
+
+
+// Help function - if help is for all the command is aked for 
+void help(){
+  FILE *cd,*environ,*dir,*pause,*echo,*clr,*quit;
+  
+=======
   }//End of while(1) 
   return 0;
 }
 // Help function - if help is for all the command is aked for 
 void help(){
   FILE *cd,*environ,*dir,*pause,*echo,*clr,*quit;
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
   cd = fopen("/helpFiles/cd.txt", "r");
   environ = fopen("/helpFiles/environ.txt", "r");
   pause = fopen("/helpFiles/pause.txt", "r");
@@ -152,6 +239,13 @@ void help(){
 
 // Help function - if help for particular command is asked for
 void ind_help(char *str){
+<<<<<<< HEAD
+  FILE *cd, *environ, *dir, *pause, *echo, *clr, *quit;
+  char line[200];
+  if(strcmp(str, "cd") == 0){
+    echo = fopen("/helpFiles/cd.txt","r");
+    while(fgets(line,200,echo)){
+=======
   FILE *cd,*environ,*dir,*pause,*echo,*clr,*quit;
   cd = fopen("/helpFiles/cd.txt", "r");
   environ = fopen("/helpFiles/environ.txt", "r");
@@ -164,54 +258,90 @@ void ind_help(char *str){
   if(strcmp(str, "cd") == 0){
     cd = fopen("cd.txt","r");
     while(fgets(line,200,cd)){
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
       printf("%s",line);
     }
     printf("\n");
   }
   else if(strcmp(str, "environ") == 0){
+<<<<<<< HEAD
+    echo = fopen("/helpFiles/environ.txt","r");
+    while(fgets(line,200,echo)){
+=======
     environ = fopen("environ.txt","r");
     while(fgets(line,200,environ)){
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
       printf("%s",line);
     }
     printf("\n");
   }
   else if(strcmp(str, "pause") == 0){
+<<<<<<< HEAD
+    echo = fopen("/helpFiles/pause.txt","r");
+    while(fgets(line,200,echo)){
+      printf( "%s",line);
+=======
     pause = fopen("pause.txt","r");
     while(fgets(line,200,pause)){
       printf("%s",line);
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
     }
     printf("\n");
   }
   else if(strcmp(str, "dir") == 0){
+<<<<<<< HEAD
+    echo = fopen("/helpFiles/dir.txt","r");
+    while(fgets(line,200,echo)){
+=======
     dir = fopen("dir.txt","r");
     while(fgets(line,200,dir)){
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
       printf("%s",line);
     }
     printf("\n");
   }
   else if(strcmp(str, "echo") == 0){
+<<<<<<< HEAD
+    echo = fopen("/helpFiles/echo.txt","r");
+=======
     echo = fopen("echo.txt","r");
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
     while(fgets(line,200,echo)){
       printf("%s",line);
     }
     printf("\n");
   }
   else if(strcmp(str, "clr") == 0){
+<<<<<<< HEAD
+    echo = fopen("/helpFiles/clr.txt","r");
+    while(fgets(line,200,echo)){
+=======
     clr = fopen("clr.txt","r");
     while(fgets(line,200,clr)){
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
       printf("%s",line);
     }
     printf("\n");
   }
   else if(strcmp(str, "quit") == 0){
+<<<<<<< HEAD
+    echo = fopen("/helpFiles/quit.txt","r");
+    while(fgets(line,200,echo)){
+=======
     quit = fopen("quit.txt","r");
     while(fgets(line,200,quit)){
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
       printf("%s",line);
     }
     printf("\n");
   }
 }
+<<<<<<< HEAD
+
+
+=======
 // Clear all tabs and spaces
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
 void clearSpace() {
   int ch;
   ch = getc(ifp);
@@ -225,7 +355,10 @@ int listDir(char * directory) {
   DIR * dir;
   struct dirent *ent;
   if((dir = opendir(directory)) != NULL) {
+<<<<<<< HEAD
+=======
 
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
     //Print all the files and directories within directory
     while( (ent = readdir(dir)) != NULL) {
       printf("%s\n", ent->d_name);
@@ -263,5 +396,8 @@ void dumpInput() {
   }
   printf("\n");
 }
+<<<<<<< HEAD
+=======
 
 
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be

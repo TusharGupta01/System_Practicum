@@ -3,3 +3,9 @@ cd
 ls
 cd 
 environ
+<<<<<<< HEAD
+clr
+quit
+
+=======
+>>>>>>> 376534686a1c5d932c1a4cabf0a2f905fe4395be
